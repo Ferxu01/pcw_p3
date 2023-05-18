@@ -1,5 +1,7 @@
 'use strict';
 
+var numeroSeleccionado = undefined;
+
 function enviaJugadores(evt) {
     evt.preventDefault();
     let fd = new FormData(evt.currentTarget),
@@ -50,8 +52,100 @@ function obtenerNumerosAleatorios() { //NUMEROS ALEATORIOS PARA JUGAR
 
 function elegirPrimerTurno() {
     let turno = Math.round(Math.random());
+    let jugadores = obtieneJugadores();
 
-    return turno === 0 ? 'jugador1' : 'jugador2';
+    return turno === 0 ? jugadores['jugador1'] : jugadores['jugador2'];
+}
+
+function getRanking() {
+    let ranking = sessionStorage.getItem('ranking');
+    return JSON.parse(ranking);
+}
+
+function setRanking(ranking) {
+    if (ranking) {
+        sessionStorage.setItem('ranking', JSON.stringify(ranking));
+    }
+}
+
+function creaRanking() {
+    //const ranking = sessionStorage.getItem('ranking');
+
+    let ranking = {
+        aaaaa: 70,
+        bbbbb: 120
+    }
+
+    sessionStorage.setItem('ranking', JSON.stringify(ranking));
+
+    let html = `
+        <table>
+        <thead>
+            <tr>
+                <th>Pos.</th>
+                <th>Usuario</th>
+                <th>Puntuación</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    // Si existe ranking
+    for (const jugador in ranking) {
+        console.warn(jugador);
+        console.warn(ranking[jugador]);
+
+        html += `
+            <tr>
+                <td>1</td>
+                <td>${jugador}</td>
+                <td>${ranking[jugador]}</td>
+            </tr>
+        `;
+    }
+    /*html += `
+        <tr>
+            <td>1</td>
+            <td>Juan</td>
+            <td>230<td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Ana</td>
+            <td>196</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Pedro</td>
+            <td>190</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Jose</td>
+            <td>118</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Patricia</td>
+            <td>108</td>
+        </tr>
+    `;*/
+
+    // Si no existe ranking
+    if (!ranking) {
+        html += `
+            <tr>
+                <td colspan="3">Todavía no hay puntuaciones guardadas. ¡¡¡Sé el primero en conseguir una puntuación máxima!!!</td>
+            </tr>
+        `;
+    }
+
+    html += `
+            </tbody>
+        </table>
+    `;
+
+    document.getElementById('ranking').innerHTML = html;
 }
 
 function creaNumerosDisponibles(numeros) {
@@ -196,6 +290,66 @@ function creaDivisionesCanvas() {
     ctx.stroke();
 }
 
+function marcarCeldasNoJugables(tablero) {
+    let cvs = document.getElementById('tableroJuego'),
+        ctx = cvs.getContext('2d');
+
+    for (let i = 0; i < tablero.length; i++) {
+        for (let j = 0; j < tablero[i].length; j++) {
+            if (tablero[i][j] === -1) {
+                // Marcar la celda con otro color para inhabilitarla
+                let x = getAnchoCelda()*j,
+                    y = getAltoCelda()*i;
+
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(x, y, getAnchoCelda(), getAltoCelda());
+            }
+        }
+    }
+}
+
+function checkNumeroSeleccionado(event) {
+    console.log(event);
+}
+
+// IMPRIME EL NÚMERO CORRESPONDIENTE EN LA CELDA SELECCIONADA
+function dibujaNumero(i, j, numero) {
+    let cvs = document.getElementById('tableroJuego'),
+        ctx = cvs.getContext('2d');
+
+        console.warn(`i: ${i}, j: ${j}`);
+    
+    console.error(`Ancho celda: ${getAnchoCelda()}, Alto celda: ${getAltoCelda()}`);
+
+    let posX = j*getAnchoCelda() + getAnchoCelda()/2,
+        posY = i*getAltoCelda() + getAltoCelda()/2;
+
+        console.log(`PosX: ${posX}, PosY: ${posY}`);
+    
+    ctx.fillStyle = '#0a0';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'normal 55px Sigmar';
+    ctx.fillText(numero, posX, posY);
+    ctx.beginPath();
+    
+    ctx.stroke();
+}
+
+/* =========================================================================== */
+/* HELPERS PARA PREPARAR LA CLASIFICACIÓN DE PUNTOS */
+/* =========================================================================== */
+
+function seleccionaMejoresRanking(puntuacionesFin) {
+    let ranking = getRanking();
+    console.log(ranking);
+
+    let puntuaciones = puntuacionesFin.map((puntuacion, i) => {
+        console.warn(i);
+        console.log(puntuacion);
+    });
+}
+
 /* =========================================================================== */
 /* HELPERS PARA PREPARAR LA PAGINA DE LA PARTIDA */
 /* =========================================================================== */
@@ -214,12 +368,12 @@ function creaMarcador() {
             </thead>
             <tbody>
                 <tr>
-                    <td>${turno === 'jugador1' ? '*' : ''}</td>
+                    <td>${turno === jugadores.jugador1 ? '*' : ''}</td>
                     <td>${jugadores.jugador1}</td>
                     <td>0</td>
                 </tr>
                 <tr>
-                    <td>${turno === 'jugador2' ? '*' : ''}</td>
+                    <td>${turno === jugadores.jugador2 ? '*' : ''}</td>
                     <td>${jugadores.jugador2}</td>
                     <td>0</td>
                 </tr>

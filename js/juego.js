@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             let tablero = await getTablero();
             tablero = tablero.TABLERO;
-            console.table(tablero);
+            marcarCeldasNoJugables(tablero);
 
             creaNumerosDisponibles(numerosDisponibles);
 

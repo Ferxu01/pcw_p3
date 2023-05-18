@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <button onclick="guardarValor(event)">Botón 1</button>
+    <button onclick="guardarValor(event)">Botón 2</button>
+    <button onclick="guardarValor(event)">Botón 3</button>
+
+    <p id="valorGuardado"></p>
+
+    <script>
+      function guardarValor(evt) {
+        // Guardar el valor en una variable o utilizarlo directamente
+        var valorSeleccionado = event.target.textContent;
+
+        // Asignar el valor a otro elemento en la página
+        document.getElementById("valorGuardado").textContent = valorSeleccionado;
+      }
+    </script>
+  </body>
+</html>
