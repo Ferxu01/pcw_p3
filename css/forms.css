@@ -1,0 +1,46 @@
+input[type="submit"], input[type="reset"]{
+    width: 80px;
+    height: 30px;
+    background-color: #008CBA;
+    border: 2px solid #008CBA;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+input[type="submit"]:hover, input[type="reset"]:hover{
+    background-color: #024157;
+    cursor: pointer;
+}
+
+input[type="submit"]:disabled{
+    background-color: lightblue;
+    border: 2px solid lightblue;
+    color: grey;
+}
+
+input[type="text"] {
+    width: 90%;
+    height: 30px;
+    padding: 0px 10px;
+    border-radius: 10em;
+    background-color: #fff;
+    color: #000;
+}
+
+form {
+    margin: 0 auto 15px;
+    max-width: 500px;
+}
+
+input[type="text"]:hover,
+input[type="text"]:focus{
+    width: 90%;
+    height: 30px;
+    padding: 0px 10px;
+    background-color: #acabab;
+    border-radius: 10em;
+    color: #000;
+    border: solid black 3px;
+}
