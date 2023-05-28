@@ -53,8 +53,30 @@ function obtenerNumerosAleatorios() { //NUMEROS ALEATORIOS PARA JUGAR
 function elegirPrimerTurno() {
     let turno = Math.round(Math.random());
     let jugadores = obtieneJugadores();
+    let jugadorTurno;
 
-    return turno === 0 ? jugadores['jugador1'] : jugadores['jugador2'];
+    if (turno === 0) {
+        jugadorTurno = jugadores['jugador1'];
+        sessionStorage.setItem('turno', jugadorTurno);
+    } else {
+        jugadorTurno = jugadores['jugador2'];
+        sessionStorage.setItem('turno', jugadorTurno);
+    }
+
+    return jugadorTurno;
+}
+
+function cambiarTurno() {
+    let jugadores = obtieneJugadores(),
+        turno = sessionStorage.getItem('turno'),
+        nuevoTurno;
+    
+    if (turno === jugadores['jugador1'])
+        nuevoTurno = jugadores['jugador2'];
+    else
+        nuevoTurno = jugadores['jugador1'];
+    
+    sessionStorage.setItem('turno', nuevoTurno);
 }
 
 function getRanking() {
@@ -153,12 +175,17 @@ function creaNumerosDisponibles(numeros) {
     let html = '';
     numeros.forEach(num => {
         html += `
-            <button type="button">${num}</button>
+            <button type="button" onclick="seleccionaNumeroDisponible(event)">${num}</button>
         `;
     });
 
     divNumsDisponibles.innerHTML = html;
 
+}
+
+function seleccionaNumeroDisponible(evt) {
+    console.log(evt.target);
+    evt.target.classList.add('seleccionada');
 }
 
 //CREAR MODAL Y ESTABLECER ESTILOS PRINCIPALES
@@ -245,15 +272,45 @@ function prepararCanvas() {
     cv.width = ANCHO;
     cv.height = ALTO;
 
-    ponerEventos();
+    //obtenerCeldaSeleccionada();
 
     return cv;
 }
 
-function ponerEventos() {
+function obtenerCelda(evt) {
+    let x = evt.offsetX,
+        y = evt.offsetY,
+        anchoCelda = getAnchoCelda(),
+        altoCelda = getAltoCelda(),
+        fila, col;
+
+    fila = Math.floor(y / altoCelda);
+    col = Math.floor(x / anchoCelda);
+    console.log(`(x,y): (${fila}, ${col})`);
+
+    // OBTENER NUMERO SI LO HA ELEGIDO
+    let numerosDisponibles = document.querySelectorAll('div#numsDisponibles>button');
+
+
+    var numero;
+    numerosDisponibles.forEach(btn => {
+        if (btn.classList.contains('seleccionada') && btn.textContent !== undefined) {
+            btn.classList.remove('seleccionada');
+            numero = parseInt(btn.textContent);
+            dibujaNumero(fila, col, numero);
+
+            // CAMBIAR EL TURNO Y ACTUALIZAR EL MARCADOR
+            cambiarTurno();
+            actualizaMarcador();
+        }
+    });
+
+    //return { fila, col };
+}
+
+function obtenerCeldaSeleccionada() {
     let cv = document.querySelector('#tableroJuego');
 
-    // cv.addEventListener('mousemove', function(evt){ // Para cuando el ratón esté por encima...
     cv.addEventListener('click', evt => {
         let x = evt.offsetX,
             y = evt.offsetY,
@@ -264,6 +321,8 @@ function ponerEventos() {
         fila = Math.floor(y / altoCelda);
         col = Math.floor(x / anchoCelda);
         console.log(`(x,y): (${fila}, ${col})`);
+
+        return { fila, col };
     });
 }
 
@@ -306,10 +365,6 @@ function marcarCeldasNoJugables(tablero) {
             }
         }
     }
-}
-
-function checkNumeroSeleccionado(event) {
-    console.log(event);
 }
 
 // IMPRIME EL NÚMERO CORRESPONDIENTE EN LA CELDA SELECCIONADA
@@ -368,18 +423,37 @@ function creaMarcador() {
             </thead>
             <tbody>
                 <tr>
-                    <td>${turno === jugadores.jugador1 ? '*' : ''}</td>
+                    <td class="celdaTurno">${turno === jugadores.jugador1 ? '*' : ''}</td>
                     <td>${jugadores.jugador1}</td>
-                    <td>0</td>
+                    <td class="puntosJ1">0</td>
                 </tr>
                 <tr>
-                    <td>${turno === jugadores.jugador2 ? '*' : ''}</td>
+                    <td class="celdaTurno">${turno === jugadores.jugador2 ? '*' : ''}</td>
                     <td>${jugadores.jugador2}</td>
-                    <td>0</td>
+                    <td class="puntosJ2">0</td>
                 </tr>
             </tbody>
         </table>
     `;
 
     document.querySelector('div.scoreContainer').innerHTML = marcador;
+}
+
+function actualizaMarcador(puntos = undefined) { // ACTUALIZA MARCADOR DE TURNO/PUNTOS
+    let celdasTurno = document.getElementsByClassName('celdaTurno'),
+        puntuaciones = sessionStorage.getItem('puntuaciones');
+
+        console.warn(puntuaciones);
+
+    if (celdasTurno[0].textContent === '*') {
+        celdasTurno[0].textContent === '';
+        celdasTurno[1].textContent === '*';
+    } else {
+        celdasTurno[0].textContent === '*';
+        celdasTurno[1].textContent === '';
+    }
+
+    // ACTUALIZAR PUNTUACIONES
+    let puntuacionJugadores = JSON.parse(puntuaciones);
+    console.log(puntuacionJugadores);
 }

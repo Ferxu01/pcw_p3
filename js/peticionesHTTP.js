@@ -9,20 +9,13 @@ function getTablero() {
 }
 
 function postComprobar(tablero) {
-    let body = {
-        tablero: tablero
-    };
-
-    let cuerpo = JSON.stringify(body);
-    console.warn(cuerpo);
+    let fd = new FormData();
+    fd.append('tablero', JSON.stringify(tablero));
 
     return new Promise((resolve, reject) => {
         fetch('api/comprobar', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: cuerpo
+            body: fd
         })
         .then(res => res.json())
         .then(tablero => {
