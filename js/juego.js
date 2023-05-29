@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 turnoActual,
                 numerosDisponibles,
                 puntuacionesPartida: {
-                    jugador1: 0,
-                    jugador2: 0
+                    [nombresJugadores.jugador1]: 0,
+                    [nombresJugadores.jugador2]: 0
                 }
             });
 

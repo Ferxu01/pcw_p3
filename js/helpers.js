@@ -184,7 +184,6 @@ function creaNumerosDisponibles(numeros) {
 }
 
 function seleccionaNumeroDisponible(evt) {
-    console.log(evt.target);
     evt.target.classList.add('seleccionada');
 }
 
@@ -231,7 +230,7 @@ function cerrarModal() {
 }
 
 function guardarInfoPartida({ tablero, nombres, puntuacionesPartida, turnoActual, numerosDisponibles }) {
-    sessionStorage.setItem('tablero', tablero);
+    sessionStorage.setItem('tablero', JSON.stringify(tablero));
     sessionStorage.setItem('nombres', JSON.stringify(nombres));
     sessionStorage.setItem('puntuaciones', JSON.stringify(puntuacionesPartida));
     sessionStorage.setItem('turno', turnoActual);
@@ -286,22 +285,47 @@ function obtenerCelda(evt) {
 
     fila = Math.floor(y / altoCelda);
     col = Math.floor(x / anchoCelda);
-    console.log(`(x,y): (${fila}, ${col})`);
 
     // OBTENER NUMERO SI LO HA ELEGIDO
     let numerosDisponibles = document.querySelectorAll('div#numsDisponibles>button');
 
 
     var numero;
-    numerosDisponibles.forEach(btn => {
+    numerosDisponibles.forEach(async btn => {
         if (btn.classList.contains('seleccionada') && btn.textContent !== undefined) {
             btn.classList.remove('seleccionada');
             numero = parseInt(btn.textContent);
             dibujaNumero(fila, col, numero);
 
+            let tableroJson = sessionStorage.getItem('tablero'),
+                tablero = JSON.parse(tableroJson);
+            console.warn(tablero);
+
+            // ACTUALIZAR VALOR EN MATRIZ Y GUARDAR DE NUEVO
+            tablero[fila][col] = numero;
+            sessionStorage.setItem('tablero', JSON.stringify(tablero));
+            
+            //COMPROBAR JUGADA Y GESTIONAR PUNTUACIONES
+            let res = await postComprobar(tablero);
+            console.log(res);
+            let celdasPuntuadas = res.CELDAS_SUMA;
+            let sumaTotal = 0;
+            celdasPuntuadas.forEach(celdaJson => {
+                let celda = JSON.parse(celdaJson);
+                let { fila, col } = celda;
+                // OBTENER NUMERO DE CADA CELDA PARA SUMAR PUNTUACION
+                let numeroCeldaActual = tablero[fila][col];
+                sumaTotal += numeroCeldaActual;
+            });
+
+            console.log(`Suma total: ${sumaTotal}`);
+            
+
+            
+
             // CAMBIAR EL TURNO Y ACTUALIZAR EL MARCADOR
-            cambiarTurno();
-            actualizaMarcador();
+            //cambiarTurno();
+            actualizaMarcador(sumaTotal);
         }
     });
 
@@ -372,14 +396,8 @@ function dibujaNumero(i, j, numero) {
     let cvs = document.getElementById('tableroJuego'),
         ctx = cvs.getContext('2d');
 
-        console.warn(`i: ${i}, j: ${j}`);
-    
-    console.error(`Ancho celda: ${getAnchoCelda()}, Alto celda: ${getAltoCelda()}`);
-
     let posX = j*getAnchoCelda() + getAnchoCelda()/2,
         posY = i*getAltoCelda() + getAltoCelda()/2;
-
-        console.log(`PosX: ${posX}, PosY: ${posY}`);
     
     ctx.fillStyle = '#0a0';
     ctx.textAlign = 'center';
@@ -441,9 +459,34 @@ function creaMarcador() {
 
 function actualizaMarcador(puntos = undefined) { // ACTUALIZA MARCADOR DE TURNO/PUNTOS
     let celdasTurno = document.getElementsByClassName('celdaTurno'),
-        puntuaciones = sessionStorage.getItem('puntuaciones');
+        puntuaciones = sessionStorage.getItem('puntuaciones'),
+        turnoActual = sessionStorage.getItem('turno');
+    
+    if (puntos) {
+        // ACTUALIZAR PUNTUACIONES
+        let puntosJugadores = JSON.parse(puntuaciones);
+        puntosJugadores[turnoActual] = parseInt(puntosJugadores[turnoActual]) + puntos;
 
-        console.warn(puntuaciones);
+        sessionStorage.setItem('puntuaciones', JSON.stringify(puntosJugadores));
+
+        let puntosJ1 = document.querySelector('td.puntosJ1'),
+            puntosJ2 = document.querySelector('td.puntosJ2'),
+            i = 0;
+        
+        for (const key in puntosJugadores) {
+            if (i === 0) {
+                puntosJ1.textContent = puntosJugadores[key];
+            } else {
+                puntosJ2.textContent = puntosJugadores[key];
+            }
+
+            i++;
+        }
+    }
+
+    //puntosJ1.textContent = puntosJugadores[]
+
+    cambiarTurno();
 
     if (celdasTurno[0].textContent === '*') {
         celdasTurno[0].textContent === '';
@@ -453,7 +496,5 @@ function actualizaMarcador(puntos = undefined) { // ACTUALIZA MARCADOR DE TURNO/
         celdasTurno[1].textContent === '';
     }
 
-    // ACTUALIZAR PUNTUACIONES
-    let puntuacionJugadores = JSON.parse(puntuaciones);
-    console.log(puntuacionJugadores);
+    
 }
