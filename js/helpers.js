@@ -1,6 +1,13 @@
 'use strict';
 
-var numeroSeleccionado = undefined;
+function dibujarCanvasActualizado(tablero) {
+    let cvs = document.getElementById('tableroJuego'),
+        ctx = cvs.getContext('2d');
+    
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    creaDivisionesCanvas();
+    dibujarCeldasActualizadas(tablero);
+}
 
 function enviaJugadores(evt) {
     evt.preventDefault();
@@ -245,7 +252,7 @@ function eliminarInfoPartida() {
     sessionStorage.removeItem('numeros');
 }
 
-function terminarPartida() {
+function terminarPartida() { // REHACER LOGICA DE FIN DE JUEGO
     eliminarInfoPartida();
     location.href = 'index.html';
 }
@@ -271,8 +278,6 @@ function prepararCanvas() {
     cv.width = ANCHO;
     cv.height = ALTO;
 
-    //obtenerCeldaSeleccionada();
-
     return cv;
 }
 
@@ -289,12 +294,16 @@ function obtenerCelda(evt) {
     // OBTENER NUMERO SI LO HA ELEGIDO
     let numerosDisponibles = document.querySelectorAll('div#numsDisponibles>button');
 
-
     var numero;
     numerosDisponibles.forEach(async btn => {
         if (btn.classList.contains('seleccionada') && btn.textContent !== undefined) {
-            btn.classList.remove('seleccionada');
             numero = parseInt(btn.textContent);
+
+            // ELIMINAR NUMERO SELECCIONADO DE LA LISTA DE NUMEROS DISPONIBLES
+            btn.textContent = ''; // OPCIONAL YA QUE SE ELIMINA EL BOTON
+            btn.remove(); // ELIMINA EL BOTON PERO NO SU CONTENEDOR, PARA SIMULAR QUE NO ESTA DISPONIBLE
+            btn.classList.remove('seleccionada');
+            
             dibujaNumero(fila, col, numero);
 
             let tableroJson = sessionStorage.getItem('tablero'),
@@ -308,31 +317,51 @@ function obtenerCelda(evt) {
             //COMPROBAR JUGADA Y GESTIONAR PUNTUACIONES
             let res = await postComprobar(tablero);
             console.log(res);
-            let celdasPuntuadas = res.CELDAS_SUMA;
-            let sumaTotal = 0;
-            celdasPuntuadas.forEach(celdaJson => {
-                let celda = JSON.parse(celdaJson);
-                let { fila, col } = celda;
-                // OBTENER NUMERO DE CADA CELDA PARA SUMAR PUNTUACION
-                let numeroCeldaActual = tablero[fila][col];
-                sumaTotal += numeroCeldaActual;
-            });
 
-            console.log(`Suma total: ${sumaTotal}`);
-            
+            if (res.JUGABLES === 0 && res.CELDAS_SUMA.length === 0) { // COMPROBAR SI QUEDAN CELDAS LIBRES PARA JUGAR
+                terminarPartida();
+            } else {
+                let celdasPuntuadas = res.CELDAS_SUMA;
 
-            
+                if (celdasPuntuadas.length > 0) { // SI GANA JUGADA
+                    let sumaTotal = 0;
+                    celdasPuntuadas.forEach(celdaJson => {
+                        let celda = JSON.parse(celdaJson);
+                        let { fila, col } = celda;
+                        // OBTENER NUMERO DE CADA CELDA PARA SUMAR PUNTUACION
+                        let numeroCeldaActual = tablero[fila][col];
+                        sumaTotal += numeroCeldaActual;
+                        
+                        tablero[fila][col] = 0;
+                        
+                        //console.log(`Suma total: ${sumaTotal}`);
+                        //console.error(`i: ${fila}, j: ${col}`);
+                        //console.error('Valor: ' + tablero[fila,col]);
 
-            // CAMBIAR EL TURNO Y ACTUALIZAR EL MARCADOR
-            //cambiarTurno();
-            actualizaMarcador(sumaTotal);
+                        console.log(`Suma total: ${sumaTotal}`);
+                    });
+                    sessionStorage.setItem('tablero', JSON.stringify(tablero));
+
+                    console.log(tablero);
+
+                    // PINTAR TABLERO ACTUALIZADO
+                    dibujarCanvasActualizado(tablero);
+
+                    // CAMBIAR EL TURNO Y ACTUALIZAR EL MARCADOR
+                    //cambiarTurno();
+                    actualizaMarcador(sumaTotal);
+                }
+            }
         }
     });
 
-    //return { fila, col };
+    // COMPROBAR SI QUEDAN NUMEROS EN LA LISTA Y SI NO SE GENERAN NUEVOS
+    if (document.querySelectorAll('div#numsDisponibles>button').length === 0) {
+        creaNumerosDisponibles(obtenerNumerosAleatorios());
+    }
 }
 
-function obtenerCeldaSeleccionada() {
+/*function obtenerCeldaSeleccionada() {
     let cv = document.querySelector('#tableroJuego');
 
     cv.addEventListener('click', evt => {
@@ -348,7 +377,7 @@ function obtenerCeldaSeleccionada() {
 
         return { fila, col };
     });
-}
+}*/
 
 function creaDivisionesCanvas() {
     let cv = document.querySelector('#tableroJuego'),
@@ -373,7 +402,7 @@ function creaDivisionesCanvas() {
     ctx.stroke();
 }
 
-function marcarCeldasNoJugables(tablero) {
+function dibujarCeldasActualizadas(tablero) {
     let cvs = document.getElementById('tableroJuego'),
         ctx = cvs.getContext('2d');
 
@@ -386,13 +415,15 @@ function marcarCeldasNoJugables(tablero) {
 
                 ctx.fillStyle = '#fff';
                 ctx.fillRect(x, y, getAnchoCelda(), getAltoCelda());
+            } else if (tablero[i][j] !== 0) { // SE PINTAN LOS VALORES NUMERICOS EN LA CELDA
+                dibujaNumero(i, j, tablero[i][j]);
             }
         }
     }
 }
 
 // IMPRIME EL NÚMERO CORRESPONDIENTE EN LA CELDA SELECCIONADA
-function dibujaNumero(i, j, numero) {
+function dibujaNumero(i, j, numero = '') {
     let cvs = document.getElementById('tableroJuego'),
         ctx = cvs.getContext('2d');
 

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!obtieneJugadores()) { //NO SE ESTA JUGANDO PARTIDA
         location.href = 'index.html';
     } else { //SE ESTA JUGANDO PARTIDA
-        if (obtienePartida()) { 
+        if (obtienePartida()) {
 
         } else { //EXISTE PARTIDA Y SE VA A INICIAR
             creaMarcador();
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             let tablero = await getTablero();
             tablero = tablero.TABLERO;
-            marcarCeldasNoJugables(tablero);
+            dibujarCeldasActualizadas(tablero);
 
             creaNumerosDisponibles(numerosDisponibles);
 
