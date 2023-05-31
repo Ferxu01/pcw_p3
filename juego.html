@@ -29,7 +29,7 @@
     <nav>
         <ul>
             <li>
-                <a href="index.html" onclick="terminarPartida()"><span>Terminar partida</span></a>
+                <a onclick="forzarTerminarPartida()"><span>Terminar partida</span></a>
             </li>
             <li>
                 <a onclick="mostrarModalAyuda()"><span>Ayuda</span><img src="images/help-icon.png" alt="help-icon"></a>
@@ -67,6 +67,9 @@
         </div>
     </footer>
 
+    <script src="js/dataStorage.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/modal.js"></script>
     <script src="js/helpers.js"></script>
     <script src="js/peticionesHTTP.js"></script>
     <script src="js/juego.js"></script>
