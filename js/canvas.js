@@ -93,7 +93,8 @@ function dibujaNumero(i, j, numero = '') {
 }
 
 function dibujarCanvasActualizado(tablero) {
-    let ctx = getCanvasContext();
+    let ctx = getCanvasContext()
+    cvs=getCanvas();
     
     ctx.clearRect(0, 0, cvs.width, cvs.height);
     creaDivisionesCanvas();

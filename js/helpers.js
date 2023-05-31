@@ -129,6 +129,15 @@ function creaNumerosDisponibles(numeros) {
 }
 
 function seleccionaNumeroDisponible(evt) {
+    let listaBotones = evt.target.parentElement.getElementsByTagName('button');
+
+    for (var i = 0; i < listaBotones.length; i++) {
+        var boton = listaBotones[i];
+        if(boton.classList.contains('seleccionada')){
+            boton.classList.remove('seleccionada');
+
+        }
+        }
     evt.target.classList.add('seleccionada');
 }
 
