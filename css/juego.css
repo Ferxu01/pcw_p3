@@ -1,0 +1,16 @@
+section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+article > *{
+    margin: 5px 10px;
+}
+
+article div{
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    text-align: center;
+}
