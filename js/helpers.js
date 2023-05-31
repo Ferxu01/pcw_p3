@@ -98,14 +98,9 @@ function setRanking(ranking) {
 }
 
 function creaRanking() {
-    //const ranking = sessionStorage.getItem('ranking');
+    const ranking = getRanking();
 
-    let ranking = {
-        aaaaa: 70,
-        bbbbb: 120
-    }
-
-    sessionStorage.setItem('ranking', JSON.stringify(ranking));
+    //sessionStorage.setItem('ranking', JSON.stringify(ranking));
 
     let html = `
         <table>
@@ -120,45 +115,17 @@ function creaRanking() {
     `;
 
     // Si existe ranking
+    let i = 1;
     for (const jugador in ranking) {
-        console.warn(jugador);
-        console.warn(ranking[jugador]);
-
         html += `
             <tr>
-                <td>1</td>
+                <td>${i}</td>
                 <td>${jugador}</td>
                 <td>${ranking[jugador]}</td>
             </tr>
         `;
+        i++;
     }
-    /*html += `
-        <tr>
-            <td>1</td>
-            <td>Juan</td>
-            <td>230<td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Ana</td>
-            <td>196</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Pedro</td>
-            <td>190</td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>Jose</td>
-            <td>118</td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td>Patricia</td>
-            <td>108</td>
-        </tr>
-    `;*/
 
     // Si no existe ranking
     if (!ranking) {
@@ -231,9 +198,43 @@ function mostrarModalAyuda() {
     modal.showModal();
 }
 
-function cerrarModal() {
+function mostrarModalFin() {
+    const marcador = JSON.parse(sessionStorage.getItem('puntuaciones'));
+    let ganador, puntuacion = 0, html = '';
+    for (const jugador in marcador) {
+        if (marcador[jugador] > puntuacion) {
+            ganador = jugador;
+            puntuacion = marcador[jugador];
+        }
+
+        html += `<p>Jugador ${jugador}: ${marcador[jugador]}</p>`;
+    }
+
+
+    const modal = creaPropiedadesModal();
+    modal.innerHTML = `
+        <h3>El juego ha terminado!!</h3>
+        <p>El jugador ${ganador} ha ganado</p>
+        ${html}
+        <button class="modal" onclick="cerrarModal()">Aceptar</button>
+    `;
+
+    document.body.appendChild(modal);
+    modal.showModal();
+}
+
+function cerrarModal(finPartida = false) {
     document.querySelector('dialog').close();
     document.querySelector('dialog').remove();
+
+    if (finPartida) {
+        // GUARDAR PUNTUACIONES/ACTUALIZAR RANKING
+        seleccionaMejoresRanking();
+
+        // BORRAR INFORMACION DE PARTIDA
+        eliminarInfoPartida();
+        location.href = 'index.html';
+    }
 }
 
 function guardarInfoPartida({ tablero, nombres, puntuacionesPartida, turnoActual, numerosDisponibles }) {
@@ -253,8 +254,10 @@ function eliminarInfoPartida() {
 }
 
 function terminarPartida() { // REHACER LOGICA DE FIN DE JUEGO
-    eliminarInfoPartida();
-    location.href = 'index.html';
+    mostrarModalFin();
+
+
+    //location.href = 'index.html';
 }
 
 /* =========================================================================== */
@@ -444,14 +447,62 @@ function dibujaNumero(i, j, numero = '') {
 /* HELPERS PARA PREPARAR LA CLASIFICACIÓN DE PUNTOS */
 /* =========================================================================== */
 
-function seleccionaMejoresRanking(puntuacionesFin) {
+function ordenarRanking(ranking) {
+    let ordenados = Object.entries(ranking).sort(function(a, b) {
+        return b[1] - a[1];
+    });
+    let top10 = ordenados.slice(0, 10);
+    let rankOrdenado = Object.fromEntries(top10);
+
+    return rankOrdenado;
+}
+
+function seleccionaMejoresRanking(puntosPartida) {
     let ranking = getRanking();
     console.log(ranking);
+    console.warn(puntosPartida);
 
-    let puntuaciones = puntuacionesFin.map((puntuacion, i) => {
-        console.warn(i);
-        console.log(puntuacion);
-    });
+    let puntuacionesCombinadas = Object.assign({}, ranking, puntosPartida);
+
+    let rankingActualizado = ordenarRanking(puntuacionesCombinadas);
+    setRanking(rankingActualizado);
+
+
+    /*let jugadoresRank = Object.keys(ranking);
+
+    // COMPROBAR SI HAY 10 JUGADORES EN EL RANKING
+    if (jugadoresRank.length === 10) {
+
+
+        //OBTENER ULTIMO JUGADOR DEL RANKING
+        let ultimoRank = jugadoresRank[jugadoresRank.length - 1];
+
+        for (const jugPartida in puntosPartida) {
+            for (const jugadorRank in ranking) {
+                // COMPROBAR SI LA PUNTUACION ESTA ENTRE LOS MEJORES
+                console.log(`Pts ultimo jugador rank: `+ ranking[ultimoRank]);
+                console.log(`Pts jugador actual partida: `+ puntosPartida[jugPartida]);
+    
+                if (ranking[ultimoRank] < puntosPartida[jugPartida]) {
+                    delete ranking[ultimoRank];
+                    ranking[jugadorRank] = puntosPartida[jugPartida];
+                    let orden = ordenarRanking();
+                    console.log(orden);
+                    //setRanking(orden);
+                }
+            }
+        }
+        let ordenado = ordenarRanking(ranking);
+        //console.log(ordenado);
+
+    } else { // HAY MENOS DE 10 JUGADORES EN RANKING
+        for (const jugadorPartida in puntosPartida) {
+            if (jugadoresRank.length < 10) {
+                ranking[jugadorPartida] = puntosPartida[jugadorPartida];
+            }
+        }
+        ordenarRanking(ranking);
+    }*/
 }
 
 /* =========================================================================== */
