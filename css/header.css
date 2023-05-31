@@ -63,7 +63,7 @@ header {
 }
 
 .header-img {
-    width: 175px;
+    width: 100px;
 }
 
 @media (min-width: 480px) {

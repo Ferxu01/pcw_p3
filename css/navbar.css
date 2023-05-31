@@ -17,7 +17,7 @@ body > nav > ul > li{
     font-family: Arial, Helvetica, sans-serif;
     padding: 0 10px 5px 20px;
     display: block;
-    height: 100%;
+    text-align: center;
 }
 
 body > nav > ul > li > a{
@@ -26,6 +26,12 @@ body > nav > ul > li > a{
     color: #000;
     font-family: Arial, Helvetica, sans-serif;
     padding: 0 10px 10px 10px;
+}
+
+body > nav > ul > li > a > img{
+    width: 30px;
+    vertical-align: middle;
+    margin: 0 5px;
 }
 
 body > nav > ul > li:hover{
