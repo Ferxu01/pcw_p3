@@ -1,12 +1,11 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
-    let jugandoPartida = sessionStorage.getItem('partida');
-    //const ranking = JSON.parse(sessionStorage.getItem('ranking'));
+    let partidaEmpezada = jugandoPartida();
 
     creaRanking();
 
-    if (jugandoPartida) {
+    if (partidaEmpezada) {
         location.href = 'juego.html';
     }
 });
