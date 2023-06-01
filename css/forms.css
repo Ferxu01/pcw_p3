@@ -44,3 +44,18 @@ input[type="text"]:focus{
     color: #000;
     border: solid black 3px;
 }
+#numsDisponibles > button{
+    width: 80px;
+    height: 80px;
+    background-color: oldlace;
+    border: 2px solid oldlace;
+    font-size: 47px;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+#numsDisponibles > button:hover{
+    background-color: oldlace;
+    border: #acabab 2px solid;
+    cursor: pointer;
+}
