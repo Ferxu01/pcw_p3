@@ -61,19 +61,34 @@ function destacarCelda(fila, col) {
 
     let x = getAnchoCelda()*col,
         y = getAltoCelda()*fila;
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    //ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillStyle = 'green';
     ctx.fillRect(x, y, getAnchoCelda(), getAltoCelda());
 
-    ctx.shadowOffsetX = 4;
+    /*ctx.shadowOffsetX = 4;
     ctx.shadowOffsetY = 4;
     ctx.shadowBlur = 6;
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';*/
 
-    ctx.restore();
+    ctx.stroke();
+}
+
+function borrarCeldaDestacada(fila, col) {
+    let ctx = getCanvasContext(), 
+        x = getAnchoCelda()*col,
+        y = getAltoCelda()*fila;
+
+    if (fila !== undefined && col !== undefined) {
+        ctx.clearRect(x, y, getAnchoCelda(), getAltoCelda());
+
+        let tablero = getTableroJuego();
+        dibujarCanvasActualizado(tablero);
+    }
 }
 
 function setPunteroMouse(evt) {
     let { fila, col } = obtenerPosicionCelda(evt);
+    borrarCeldaDestacada(fila, col);
 
     if (compruebaSeleccionados()) { // SI NO SE HA SELECCIONADO NINGUN NUMERO
         // CAMBIAR ESTILO DE PUNTERO A NOT-ALLOWED
@@ -83,8 +98,8 @@ function setPunteroMouse(evt) {
             if (!compruebaCeldaDisponible(fila, col)) {
                 evt.target.style.cursor = 'not-allowed';
             } else {
-                // DESTACAR CELDA CON SOMBREADO
-                //destacarCelda(fila, col);
+                // DESTACAR CELDA QUE SE PASA POR ENCIMA
+                destacarCelda(fila, col);
                 // CAMBIAR PUNTERO A TIPO MANO
                 evt.target.style.cursor = 'pointer';
             }
