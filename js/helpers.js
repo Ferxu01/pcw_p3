@@ -128,8 +128,17 @@ function creaNumerosDisponibles(numeros) {
 
 }
 
+function compruebaSeleccionados() {
+    return document.querySelectorAll('div#numsDisponibles>button.seleccionada').length === 0;
+}
+
+// COMPRUEBA SI HAY MAS DE UN NUMERO SELECCIONADO
 function seleccionaNumeroDisponible(evt) {
-    evt.target.classList.add('seleccionada');
+    if (compruebaSeleccionados()) {
+        evt.target.classList.add('seleccionada');
+    } else {
+        evt.target.classList.remove('seleccionada');
+    }
 }
 
 function forzarTerminarPartida() {
@@ -141,7 +150,18 @@ function terminarPartida() { // REHACER LOGICA DE FIN DE JUEGO
     mostrarModalFin();
 }
 
-function obtenerCelda(evt) {
+function compruebaCeldaHabilitada(fila, col) {
+    let tablero = getTableroJuego();
+    return parseInt(tablero[fila][col]) !== -1;
+}
+
+function compruebaCeldaDisponible(fila, col) {
+    let tablero = getTableroJuego(),
+        valorCelda = parseInt(tablero[fila][col]);
+    return valorCelda !== -1 && valorCelda === 0;
+}
+
+function obtenerPosicionCelda(evt) {
     let x = evt.offsetX,
         y = evt.offsetY,
         anchoCelda = getAnchoCelda(),
@@ -151,7 +171,15 @@ function obtenerCelda(evt) {
     fila = Math.floor(y / altoCelda);
     col = Math.floor(x / anchoCelda);
 
-    realizaJugada(fila, col);
+    return { fila, col };
+}
+
+function obtenerCelda(evt) {
+    let { fila, col } = obtenerPosicionCelda(evt);
+
+    if (compruebaCeldaDisponible(fila, col)) {
+        realizaJugada(fila, col);
+    }
 }
 
 function realizaJugada(fila, col) {
