@@ -59,3 +59,7 @@ input[type="text"]:focus{
     border: #acabab 2px solid;
     cursor: pointer;
 }
+form>div{
+    display: inline-block;
+    margin: 0px 5px;
+}

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/juego.css">
     <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/tablas.css">
 </head>
 <body>
     <header>
@@ -44,8 +45,7 @@
             <h2>Tablero de juego</h2>
             <hr>
             <div class="scoreContainer"></div>
-            <br>
-            <canvas id="tableroJuego" style="border: 2px solid #000;" onclick="obtenerCelda(event)"></canvas>
+            <canvas id="tableroJuego" style="border: 2px solid #000;" onclick="obtenerCelda(event)" onmousemove="setPunteroMouse(event)"></canvas>
         </article>
 
         <article>

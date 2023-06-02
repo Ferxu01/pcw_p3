@@ -112,10 +112,11 @@ form{
     text-align: center;
 }
 
-div{
-    display: inline-block;
-    margin: 0px 10px;
+div#ranking{
+    margin-top: 10px;
 }
+
+
 
 @media (min-width: 480px) {
     .notice-container {
