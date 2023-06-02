@@ -55,7 +55,7 @@ function mostrarModalFin() {
         <h3>El juego ha terminado!!</h3>
         <p>El jugador ${ganador} ha ganado</p>
         ${html}
-        <button class="modal" onclick="cerrarModal()">Aceptar</button>
+        <button class="modal" onclick="cerrarModal(true)">Aceptar</button>
     `;
 
     document.body.appendChild(modal);
@@ -66,8 +66,22 @@ function cerrarModal(finPartida = false) {
     document.querySelector('dialog').close();
     document.querySelector('dialog').remove();
 
+    let ranking = getRanking(),
+        puntuaciones = getPuntuaciones();
+
     if (finPartida) {
-        // GUARDAR PUNTUACIONES/ACTUALIZAR RANKING
+        // GUARDAR PUNTUACIONES
+        console.log(puntuaciones);
+
+        if (ranking) {
+            // FUSIONAR LAS PUNTUACIONES Y EL RANKING ANTERIOR
+            let nuevoRanking = Object.assign({}, ranking, puntuaciones);
+            setRanking(nuevoRanking);
+        } else {
+            setRanking(puntuaciones);
+        }
+
+        // ACTUALIZAR RANKING
         seleccionaMejoresRanking();
 
         // BORRAR INFORMACION DE PARTIDA

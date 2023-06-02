@@ -4,21 +4,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!getJugadores()) { //NO SE ESTA JUGANDO PARTIDA (NO HAY DATOS DE JUGADORES)
         location.href = 'index.html';
     } else { // SI LOS NOMBRES DE LOS JUGADORES ESTAN DEFINIDOS
-        /*if (!jugandoPartida()) {
-            console.log('breakpoint 2');
-        } else { //EXISTE PARTIDA Y SE VA A INICIAR
-            console.log('breakpoint 3');
+        prepararCanvas();
+        creaDivisionesCanvas();
 
-            prepararCanvas();
-            creaDivisionesCanvas();
-
-            let turnoActual = getTurno() ?? undefined;
-
-            if (turnoActual === undefined) {
-                turnoActual = elegirPrimerTurno();
-            }
-            
-            let numerosDisponibles = obtenerNumerosAleatorios(),
+        if (!jugandoPartida()) {
+            let turnoActual = elegirPrimerTurno(),
+                numerosDisponibles = obtenerNumerosAleatorios(),
                 nombresJugadores = getJugadores();
             
             let tablero = await getTablero();
@@ -27,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             creaNumerosDisponibles(numerosDisponibles);
             creaMarcador();
+            cambiarTurno(true);
 
             setInfoPartida({
                 tablero,
@@ -41,42 +33,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     [nombresJugadores.jugador2]: 0
                 }
             });
+        } else {
+            let numerosDisponibles = getNumeros(),
+                tablero = getTableroJuego();
+            
+            dibujarCeldasActualizadas(tablero);
+            creaNumerosDisponibles(numerosDisponibles);
+            creaMarcador();
 
-            mostrarModalTurno();
-        }*/
-
-        prepararCanvas();
-        creaDivisionesCanvas();
-
-        let turnoActual = getTurno() ?? undefined;
-
-        if (turnoActual === undefined) {
-            turnoActual = elegirPrimerTurno();
+            let turno = getTurno()
+            setTurnoMarcardor(turno);
         }
-        
-        let numerosDisponibles = obtenerNumerosAleatorios(),
-            nombresJugadores = getJugadores();
-        
-        let tablero = await getTablero();
-        tablero = tablero.TABLERO;
-        dibujarCeldasActualizadas(tablero);
-
-        creaNumerosDisponibles(numerosDisponibles);
-        creaMarcador();
-
-        setInfoPartida({
-            tablero,
-            nombres: {
-                jugador1: nombresJugadores.jugador1,
-                jugador2: nombresJugadores.jugador2
-            },
-            turnoActual,
-            numerosDisponibles,
-            puntuacionesPartida: {
-                [nombresJugadores.jugador1]: 0,
-                [nombresJugadores.jugador2]: 0
-            }
-        });
 
         mostrarModalTurno();
     }

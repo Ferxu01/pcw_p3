@@ -51,26 +51,42 @@ function elegirPrimerTurno() {
     return jugadorTurno;
 }
 
-function cambiarTurno() {
+function setTurnoMarcardor(turno) {
+    let jugadores = getJugadores(),
+        celdasTurno = document.getElementsByClassName('celdaTurno');
+
+    if (jugadores['jugador1'] === turno) {
+        celdasTurno[0].textContent = '*';
+        celdasTurno[1].textContent = '';
+
+        celdasTurno[0].parentElement.classList.add('turnoActual');
+        celdasTurno[1].parentElement.classList.remove('turnoActual');
+    } else {
+        celdasTurno[0].textContent = '';
+        celdasTurno[1].textContent = '*';
+
+        // CAMBIAR FONDO TRANSPARENTE DE FILA
+        celdasTurno[0].parentElement.classList.remove('turnoActual');
+        celdasTurno[1].parentElement.classList.add('turnoActual');
+    }
+}
+
+function cambiarTurno(primerTurno = undefined) {
     let jugadores = getJugadores(),
         turno = getTurno(),
-        nuevoTurno,
-        celdasTurno = document.getElementsByClassName('celdaTurno');
+        nuevoTurno;
     
-    if (turno === jugadores['jugador1'])
-        nuevoTurno = jugadores['jugador2'];
-    else
-        nuevoTurno = jugadores['jugador1'];
-    
-    if (celdasTurno[0].textContent === '*') {
-        celdasTurno[0].textContent === '';
-        celdasTurno[1].textContent === '*';
+    if (!primerTurno) {
+        if (turno === jugadores['jugador1'])
+            nuevoTurno = jugadores['jugador2'];
+        else
+            nuevoTurno = jugadores['jugador1'];
+
+        setTurnoMarcardor(nuevoTurno);
+        setTurno(nuevoTurno);
     } else {
-        celdasTurno[0].textContent === '*';
-        celdasTurno[1].textContent === '';
+        setTurnoMarcardor(turno);
     }
-    
-    setTurno(nuevoTurno);
 }
 
 function creaRanking() {
@@ -134,11 +150,22 @@ function compruebaSeleccionados() {
 
 // COMPRUEBA SI HAY MAS DE UN NUMERO SELECCIONADO
 function seleccionaNumeroDisponible(evt) {
-    if (compruebaSeleccionados()) {
+    /*if (compruebaSeleccionados()) {
         evt.target.classList.add('seleccionada');
     } else {
         evt.target.classList.remove('seleccionada');
+    }*/
+
+    let listaBotones = evt.target.parentElement.getElementsByTagName('button');
+
+    for (var i = 0; i < listaBotones.length; i++) {
+        var boton = listaBotones[i];
+        if(boton.classList.contains('seleccionada')) {
+            boton.classList.remove('seleccionada');
+
+        }
     }
+    evt.target.classList.add('seleccionada');
 }
 
 function forzarTerminarPartida() {
@@ -234,6 +261,8 @@ function realizaJugada(fila, col) {
 
                     // CAMBIAR EL TURNO Y ACTUALIZAR EL MARCADOR
                     actualizaMarcador(sumaTotal);
+                } else {
+                    cambiarTurno();
                 }
             }
         }
@@ -317,9 +346,9 @@ function creaMarcador() {
         <table>
             <thead>
                 <tr>
-                    <td>Turno</td>
-                    <td>Jugador</td>
-                    <td>Puntos</td>
+                    <th>Turno</th>
+                    <th>Jugador</th>
+                    <th>Puntos</th>
                 </tr>
             </thead>
             <tbody>
@@ -364,5 +393,5 @@ function actualizaMarcador(puntos = undefined) { // ACTUALIZA MARCADOR DE TURNO 
         }
     }
 
-    cambiarTurno();
+    //cambiarTurno();
 }

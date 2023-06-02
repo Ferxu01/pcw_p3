@@ -117,17 +117,19 @@ function setPunteroMouse(evt) {
 function dibujarCeldasActualizadas(tablero) {
     let ctx = getCanvasContext();
 
-    for (let i = 0; i < tablero.length; i++) {
-        for (let j = 0; j < tablero[i].length; j++) {
-            if (tablero[i][j] === -1) {
-                // Marcar la celda con otro color para inhabilitarla
-                let x = getAnchoCelda()*j,
-                    y = getAltoCelda()*i;
-
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(x, y, getAnchoCelda(), getAltoCelda());
-            } else if (tablero[i][j] !== 0) { // SE PINTAN LOS VALORES NUMERICOS EN LA CELDA
-                dibujaNumero(i, j, tablero[i][j]);
+    if (tablero) {
+        for (let i = 0; i < tablero.length; i++) {
+            for (let j = 0; j < tablero[i].length; j++) {
+                if (tablero[i][j] === -1) {
+                    // Marcar la celda con otro color para inhabilitarla
+                    let x = getAnchoCelda()*j,
+                        y = getAltoCelda()*i;
+    
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(x, y, getAnchoCelda(), getAltoCelda());
+                } else if (tablero[i][j] !== 0) { // SE PINTAN LOS VALORES NUMERICOS EN LA CELDA
+                    dibujaNumero(i, j, tablero[i][j]);
+                }
             }
         }
     }
