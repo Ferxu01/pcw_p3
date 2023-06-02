@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             creaMarcador();
 
             let turno = getTurno()
-            setTurnoMarcardor(turno);
+            setTurnoMarcador(turno);
         }
 
         mostrarModalTurno();

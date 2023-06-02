@@ -51,7 +51,7 @@ function elegirPrimerTurno() {
     return jugadorTurno;
 }
 
-function setTurnoMarcardor(turno) {
+function setTurnoMarcador(turno) {
     let jugadores = getJugadores(),
         celdasTurno = document.getElementsByClassName('celdaTurno');
 
@@ -82,10 +82,10 @@ function cambiarTurno(primerTurno = undefined) {
         else
             nuevoTurno = jugadores['jugador1'];
 
-        setTurnoMarcardor(nuevoTurno);
+        setTurnoMarcador(nuevoTurno);
         setTurno(nuevoTurno);
     } else {
-        setTurnoMarcardor(turno);
+        setTurnoMarcador(turno);
     }
 }
 
@@ -132,6 +132,9 @@ function creaRanking() {
 }
 
 function creaNumerosDisponibles(numeros) {
+    // ACTUALIZAR NUEVOS VALORES EN STORAGE
+    setNumeros(numeros);
+
     const divNumsDisponibles = document.getElementById('numsDisponibles');
     let html = '';
     numeros.forEach(num => {
@@ -141,7 +144,6 @@ function creaNumerosDisponibles(numeros) {
     });
 
     divNumsDisponibles.innerHTML = html;
-
 }
 
 function compruebaSeleccionados() {
@@ -150,12 +152,6 @@ function compruebaSeleccionados() {
 
 // COMPRUEBA SI HAY MAS DE UN NUMERO SELECCIONADO
 function seleccionaNumeroDisponible(evt) {
-    /*if (compruebaSeleccionados()) {
-        evt.target.classList.add('seleccionada');
-    } else {
-        evt.target.classList.remove('seleccionada');
-    }*/
-
     let listaBotones = evt.target.parentElement.getElementsByTagName('button');
 
     for (var i = 0; i < listaBotones.length; i++) {
@@ -211,22 +207,34 @@ function obtenerCelda(evt) {
 
 function realizaJugada(fila, col) {
     // OBTENER NUMERO SI LO HA ELEGIDO
-    let numerosDisponibles = document.querySelectorAll('div#numsDisponibles>button');
+    let numsDisponibles = document.querySelectorAll('div#numsDisponibles>button');
 
     var numero;
-    numerosDisponibles.forEach(async btn => {
+    numsDisponibles.forEach(async btn => {
         if (btn.classList.contains('seleccionada') && btn.textContent !== undefined) {
             numero = parseInt(btn.textContent);
 
             // ELIMINAR NUMERO SELECCIONADO DE LA LISTA DE NUMEROS DISPONIBLES
-            btn.textContent = ''; // OPCIONAL YA QUE SE ELIMINA EL BOTON
+            /*btn.textContent = ''; // OPCIONAL YA QUE SE ELIMINA EL BOTON
             btn.remove(); // ELIMINA EL BOTON PERO NO SU CONTENEDOR, PARA SIMULAR QUE NO ESTA DISPONIBLE
-            btn.classList.remove('seleccionada');
+            btn.classList.remove('seleccionada');*/
             
             dibujaNumero(fila, col, numero);
 
+            // ELIMINAR EL NUMERO DE LOS DISPONIBLES Y ACTUALIZARLO EN STORAGE
+            let numerosDisponibles = getNumeros(),
+                indice = numerosDisponibles.indexOf(numero);
+            
+            numerosDisponibles[indice] = -1;
+            console.log(numerosDisponibles);
+            setNumeros(numerosDisponibles);
+
+            btn.textContent = ''; // OPCIONAL YA QUE SE ELIMINA EL BOTON
+            btn.remove(); // ELIMINA EL BOTON PERO NO SU CONTENEDOR, PARA SIMULAR QUE NO ESTA DISPONIBLE
+            btn.classList.remove('seleccionada');
+
+
             let tablero = getTableroJuego();
-            console.warn(tablero);
 
             // ACTUALIZAR VALOR EN MATRIZ Y GUARDAR DE NUEVO
             tablero[fila][col] = numero;
@@ -234,7 +242,6 @@ function realizaJugada(fila, col) {
             
             //COMPROBAR JUGADA Y GESTIONAR PUNTUACIONES
             let res = await postComprobar(tablero);
-            console.log(res);
 
             if (res.JUGABLES === 0 && res.CELDAS_SUMA.length === 0) { // COMPROBAR SI QUEDAN CELDAS LIBRES PARA JUGAR
                 terminarPartida();
