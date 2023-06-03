@@ -1,6 +1,6 @@
 .site-footer{
     position: relative;
-    background-color: #FFA500;
+    background-color: #008CBA;
     width: auto;
     font-family: Arial, Helvetica, sans-serif;
     left: 0;
@@ -10,18 +10,16 @@
     box-sizing: border-box;
 }
 
-.container > p {
-    color: #000;
-}
-
 .about-us{
     float: left;
     text-align: left;
+    display: inline;
 }
 
 .copyright-text{
     float: right;
     text-align: right;
+    display: inline;
 }
 
 footer a{
