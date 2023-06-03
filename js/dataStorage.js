@@ -11,7 +11,7 @@ function getJugadores() {
     return JSON.parse(jugadores);
 }
 
-function jugandoPartida() { // Corregir logica: TESTEAR
+function jugandoPartida() {
     return getTableroJuego() && getNombres() && getPuntuaciones() && getTurno() && getNumeros();
 }
 

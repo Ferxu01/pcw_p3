@@ -107,11 +107,6 @@ function setPunteroMouse(evt) {
             evt.target.style.cursor = 'not-allowed';
         }
     }
-
-    /*if (compruebaCeldaHabilitada(fila, col) && compruebaCeldaDisponible(fila, col)) {
-        // CAMBIAR ESTILO DE PUNTERO A LA MANO
-        evt.target.style.cursor = 'pointer';
-    }*/
 }
 
 function dibujarCeldasActualizadas(tablero) {

@@ -226,7 +226,6 @@ function realizaJugada(fila, col) {
                 indice = numerosDisponibles.indexOf(numero);
             
             numerosDisponibles[indice] = -1;
-            console.log(numerosDisponibles);
             setNumeros(numerosDisponibles);
 
             btn.textContent = ''; // OPCIONAL YA QUE SE ELIMINA EL BOTON
@@ -261,8 +260,6 @@ function realizaJugada(fila, col) {
                     });
                     setTablero(tablero);
 
-                    console.log(tablero);
-
                     // PINTAR TABLERO ACTUALIZADO
                     dibujarCanvasActualizado(tablero);
 
@@ -296,50 +293,11 @@ function ordenarRanking(ranking) {
 
 function seleccionaMejoresRanking(puntosPartida) {
     let ranking = getRanking();
-    console.log(ranking);
-    console.warn(puntosPartida);
-
+    
     let puntuacionesCombinadas = Object.assign({}, ranking, puntosPartida);
 
     let rankingActualizado = ordenarRanking(puntuacionesCombinadas);
     setRanking(rankingActualizado);
-
-
-    /*let jugadoresRank = Object.keys(ranking);
-
-    // COMPROBAR SI HAY 10 JUGADORES EN EL RANKING
-    if (jugadoresRank.length === 10) {
-
-
-        //OBTENER ULTIMO JUGADOR DEL RANKING
-        let ultimoRank = jugadoresRank[jugadoresRank.length - 1];
-
-        for (const jugPartida in puntosPartida) {
-            for (const jugadorRank in ranking) {
-                // COMPROBAR SI LA PUNTUACION ESTA ENTRE LOS MEJORES
-                console.log(`Pts ultimo jugador rank: `+ ranking[ultimoRank]);
-                console.log(`Pts jugador actual partida: `+ puntosPartida[jugPartida]);
-    
-                if (ranking[ultimoRank] < puntosPartida[jugPartida]) {
-                    delete ranking[ultimoRank];
-                    ranking[jugadorRank] = puntosPartida[jugPartida];
-                    let orden = ordenarRanking();
-                    console.log(orden);
-                    //setRanking(orden);
-                }
-            }
-        }
-        let ordenado = ordenarRanking(ranking);
-        //console.log(ordenado);
-
-    } else { // HAY MENOS DE 10 JUGADORES EN RANKING
-        for (const jugadorPartida in puntosPartida) {
-            if (jugadoresRank.length < 10) {
-                ranking[jugadorPartida] = puntosPartida[jugadorPartida];
-            }
-        }
-        ordenarRanking(ranking);
-    }*/
 }
 
 /* =========================================================================== */

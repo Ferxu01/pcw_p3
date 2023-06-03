@@ -70,9 +70,6 @@ function cerrarModal(finPartida = false) {
         puntuaciones = getPuntuaciones();
 
     if (finPartida) {
-        // GUARDAR PUNTUACIONES
-        console.log(puntuaciones);
-
         if (ranking) {
             // FUSIONAR LAS PUNTUACIONES Y EL RANKING ANTERIOR
             let nuevoRanking = Object.assign({}, ranking, puntuaciones);
