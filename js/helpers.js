@@ -139,20 +139,33 @@ function creaNumerosDisponibles(numeros) {
     let html = '';
     numeros.forEach(num => {
         html += `
-            <button type="button" onclick="seleccionaNumeroDisponible(event)">${num}</button>
+            <div class="numeroDiv" onmouseover="compruebaPunteroNumeros(event)">
+                <button type="button" onclick="seleccionaNumeroDisponible(event)">${num}</button>
+            </div>
         `;
     });
 
     divNumsDisponibles.innerHTML = html;
 }
 
+function compruebaPunteroNumeros(evt) {
+    // SABER EL TIPO DE ELEMENTO HTML QUE TIENE EL ELEMENTO "MAS SUPERIOR" DE LA INTERFAZ
+    let tipoElemento = evt.target.tagName;
+
+    if (tipoElemento === 'BUTTON') {
+        evt.target.style.cursor = 'pointer';
+    } else if (tipoElemento === 'DIV') {
+        evt.target.style.cursor = 'not-allowed';
+    }
+}
+
 function compruebaSeleccionados() {
-    return document.querySelectorAll('div#numsDisponibles>button.seleccionada').length === 0;
+    return document.querySelectorAll('div#numsDisponibles>div>button.seleccionada').length === 0;
 }
 
 // COMPRUEBA SI HAY MAS DE UN NUMERO SELECCIONADO
 function seleccionaNumeroDisponible(evt) {
-    let listaBotones = evt.target.parentElement.getElementsByTagName('button');
+    let listaBotones = evt.target.parentElement.parentElement.getElementsByTagName('button');
 
     for (var i = 0; i < listaBotones.length; i++) {
         var boton = listaBotones[i];
@@ -207,7 +220,7 @@ function obtenerCelda(evt) {
 
 function realizaJugada(fila, col) {
     // OBTENER NUMERO SI LO HA ELEGIDO
-    let numsDisponibles = document.querySelectorAll('div#numsDisponibles>button');
+    let numsDisponibles = document.querySelectorAll('div#numsDisponibles>div>button');
 
     var numero;
     numsDisponibles.forEach(async btn => {
@@ -228,13 +241,10 @@ function realizaJugada(fila, col) {
             numerosDisponibles[indice] = -1;
             setNumeros(numerosDisponibles);
 
-            btn.textContent = ''; // OPCIONAL YA QUE SE ELIMINA EL BOTON
             btn.remove(); // ELIMINA EL BOTON PERO NO SU CONTENEDOR, PARA SIMULAR QUE NO ESTA DISPONIBLE
             btn.classList.remove('seleccionada');
 
-
             let tablero = getTableroJuego();
-
             // ACTUALIZAR VALOR EN MATRIZ Y GUARDAR DE NUEVO
             tablero[fila][col] = numero;
             setTablero(tablero); // OPCIONAL EJECUTARLO AQUI TAMBIEN
@@ -273,7 +283,7 @@ function realizaJugada(fila, col) {
     });
 
     // COMPROBAR SI QUEDAN NUMEROS EN LA LISTA Y SI NO SE GENERAN NUEVOS
-    if (document.querySelectorAll('div#numsDisponibles>button').length === 0) {
+    if (document.querySelectorAll('div#numsDisponibles>div>button').length === 0) {
         creaNumerosDisponibles(obtenerNumerosAleatorios());
     }
 }
@@ -357,6 +367,4 @@ function actualizaMarcador(puntos = undefined) { // ACTUALIZA MARCADOR DE TURNO 
             i++;
         }
     }
-
-    //cambiarTurno();
 }

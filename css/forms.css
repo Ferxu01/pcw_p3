@@ -44,7 +44,7 @@ input[type="text"]:focus{
     color: #000;
     border: solid black 3px;
 }
-#numsDisponibles > button{
+#numsDisponibles > div > button{
     width: 80px;
     height: 80px;
     background-color: oldlace;
@@ -52,10 +52,17 @@ input[type="text"]:focus{
     font-size: 47px;
     font-family: Arial, Helvetica, sans-serif;
     border-radius: 10px;
-    margin-top: 10px;
 }
-#numsDisponibles > button:hover{
+#numsDisponibles > div > button:hover{
     background-color: oldlace;
     border: #acabab 2px solid;
     cursor: pointer;
+}
+
+/* FONDO DE NUMERO VACIO */
+.numeroDiv {
+    background-color: gray;
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
 }
