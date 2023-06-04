@@ -66,3 +66,19 @@ input[type="text"]:focus{
     height: 80px;
     border-radius: 10px;
 }
+
+.modal {
+    margin: 5px 0px;
+    width: 60px;
+    height: 25px;
+    background-color: #39abd1;
+    border: 1px solid #39abd1;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.modal:hover {
+    background-color: #3286a1;
+    border: 2px solid black;
+    cursor: pointer;
+}

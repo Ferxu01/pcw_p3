@@ -24,7 +24,7 @@ body > nav > ul > li{
 body > nav > ul > li > a{
     display: block;
     text-decoration: none;
-    color: #000;
+    color: white;
     font-family: Arial, Helvetica, sans-serif;
     padding: 0 10px 10px 10px;
 }
@@ -32,7 +32,8 @@ body > nav > ul > li > a{
 body > nav > ul > li > a > img{
     width: 30px;
     vertical-align: middle;
-    margin: 0 5px;
+    margin: 0 10px;
+    
 }
 
 body > nav > ul > li:hover{

@@ -62,7 +62,7 @@ function destacarCelda(fila, col) {
     let x = getAnchoCelda()*col,
         y = getAltoCelda()*fila;
     
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = '#86c491';
     ctx.fillRect(x, y, getAnchoCelda(), getAltoCelda());
 
     ctx.stroke();
@@ -115,7 +115,7 @@ function dibujarCeldasActualizadas(tablero) {
                     let x = getAnchoCelda()*j,
                         y = getAltoCelda()*i;
     
-                    ctx.fillStyle = '#fff';
+                    ctx.fillStyle = '#acabab';
                     ctx.fillRect(x, y, getAnchoCelda(), getAltoCelda());
                 } else if (tablero[i][j] !== 0) { // SE PINTAN LOS VALORES NUMERICOS EN LA CELDA
                     dibujaNumero(i, j, tablero[i][j]);
